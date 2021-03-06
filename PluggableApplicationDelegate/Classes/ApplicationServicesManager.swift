@@ -324,14 +324,14 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     
     @available(iOS 6.0, *)
     public func application(_ application: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {
-        return __services.reduce(false) { (previous, service) -> Bool in
+        return __services?.reduce(false) { (previous, service) -> Bool in
             previous || (service.application?(application, shouldSaveSecureApplicationState: coder) ?? false)
         }
     }
     
     @available(iOS 6.0, *)
     public func application(_ application: UIApplication, shouldRestoreSecureApplicationState coder: NSCoder) -> Bool {
-        return __services.reduce(false) { (previous, service) -> Bool in
+        return __services?.reduce(false) { (previous, service) -> Bool in
             previous || (service.application?(application, shouldRestoreSecureApplicationState: coder) ?? false)
         }
     }
