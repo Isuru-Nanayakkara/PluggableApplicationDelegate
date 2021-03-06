@@ -29,7 +29,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     
     
     @available(iOS 6.0, *)
-    public func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    public func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
         return __services.reduce(true) { (previous, service) -> Bool in
             previous && (service.application?(application, willFinishLaunchingWithOptions: launchOptions) ?? true)
@@ -37,7 +37,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     }
     
     @available(iOS 3.0, *)
-    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
+    public func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
 
         return __services.reduce(true) { (previous, service) -> Bool in
             previous && (service.application?(application, didFinishLaunchingWithOptions: launchOptions) ?? true)
@@ -74,7 +74,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     }
     
     @available(iOS 9.0, *)
-    public func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+    public func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         return __services.reduce(true) { (previous, service) -> Bool in
             previous && (service.application?(app, open: url, options: options) ?? true)
         }
@@ -223,6 +223,8 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     
     /// Applications with the "fetch" background mode may be given opportunities to fetch updated content in the background or when it is convenient for the system. This method will be called in these situations. You should call the fetchCompletionHandler as soon as you're finished performing that operation, so the system can accurately estimate its power and data cost.
     @available(iOS 7.0, *)
+    
+    
     public func application(_ application: UIApplication, performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Swift.Void) {
         for service in __services {
             service.application?(application, performFetchWithCompletionHandler: completionHandler)
@@ -303,15 +305,14 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     // Constants representing common extension point identifiers are provided further down.
     // If unimplemented, the default behavior is to allow the extension point identifier.
     @available(iOS 8.0, *)
-    public func application(_ application: UIApplication, shouldAllowExtensionPointIdentifier extensionPointIdentifier: UIApplicationExtensionPointIdentifier) -> Bool {
+    public func application(_ application: UIApplication, shouldAllowExtensionPointIdentifier extensionPointIdentifier: UIApplication.ExtensionPointIdentifier) -> Bool {
         return __services.reduce(true) { (previous, service) -> Bool in
             previous && (service.application?(application, shouldAllowExtensionPointIdentifier: extensionPointIdentifier) ?? true)
         }
     }
     
-    
     @available(iOS 6.0, *)
-    public func application(_ application: UIApplication, viewControllerWithRestorationIdentifierPath identifierComponents: [Any], coder: NSCoder) -> UIViewController? {
+    public func application(_ application: UIApplication, viewControllerWithRestorationIdentifierPath identifierComponents: [String], coder: NSCoder) -> UIViewController? {
         for service in __services {
             if let viewController = service.application?(application, viewControllerWithRestorationIdentifierPath: identifierComponents, coder: coder) {
                 return viewController
@@ -322,16 +323,16 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     }
     
     @available(iOS 6.0, *)
-    public func application(_ application: UIApplication, shouldSaveApplicationState coder: NSCoder) -> Bool {
+    public func application(_ application: UIApplication, shouldSaveSecureApplicationState coder: NSCoder) -> Bool {
         return __services.reduce(false) { (previous, service) -> Bool in
-            previous || (service.application?(application, shouldSaveApplicationState: coder) ?? false)
+            previous || (service.application?(application, shouldSaveSecureApplicationState: coder) ?? false)
         }
     }
     
     @available(iOS 6.0, *)
-    public func application(_ application: UIApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
+    public func application(_ application: UIApplication, shouldRestoreSecureApplicationState coder: NSCoder) -> Bool {
         return __services.reduce(false) { (previous, service) -> Bool in
-            previous || (service.application?(application, shouldRestoreApplicationState: coder) ?? false)
+            previous || (service.application?(application, shouldRestoreSecureApplicationState: coder) ?? false)
         }
     }
     
@@ -396,7 +397,7 @@ open class PluggableApplicationDelegate: UIResponder, UIApplicationDelegate {
     // You should use the CKShareMetadata object's shareURL and containerIdentifier to schedule a CKAcceptSharesOperation, then start using
     // the resulting CKShare and its associated record(s), which will appear in the CKContainer's shared database in a zone matching that of the record's owner.
     @available(iOS 10.0, *)
-    public func application(_ application: UIApplication, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShareMetadata) {
+    public func application(_ application: UIApplication, userDidAcceptCloudKitShareWith cloudKitShareMetadata: CKShare.Metadata) {
         for service in __services {
             service.application?(application, userDidAcceptCloudKitShareWith: cloudKitShareMetadata)
         }
